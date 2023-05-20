@@ -17,7 +17,7 @@ def home(request, *args, **kwargs):
 
 
 def user_page(request, *args, **kwargs):
-    return render(request, "user_profile.html")
+    return render(request, "make_requests.html")
 
 
 class RegisterUser(CreateView):
