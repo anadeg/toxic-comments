@@ -34,17 +34,10 @@
 	<td valign="top" class="left-chapters">
 	<ul id="leftchapters">
 
-{% for c in cats %}
-{% if c.women__count > 0 %}
-	{% if c.pk == cat_selected %}
-		<li class="selected">{{c.name}}</li>
-	{% else %}
-		<li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
-	{% endif %}
-{% endif %}
-{% endfor %}
-
-
+		{% if request.user.is_authenticated %}
+		<li><a href="{% url 'requests_history' %}">Requests History</a></li>
+		<li><a href="{% url 'make_request' %}">Make Request</a></li>
+		{% endif %}
 
 	</ul>
 </td>
@@ -90,9 +83,7 @@
 <!-- Конец блока контента -->
 
 </td></tr></table>
-</td></tr>
-<!-- Footer -->
 
-<!-- Конец footer'а и страницы -->
+
 </body>
 </html>
