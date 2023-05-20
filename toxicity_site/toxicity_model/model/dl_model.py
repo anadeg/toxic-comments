@@ -1,20 +1,10 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import re
 import string
 import tensorflow
 from keras import Sequential
 from keras.layers import Embedding, GlobalAveragePooling1D, Dense
-
-from sklearn.model_selection import train_test_split
-
-# from tensorflow.keras import Sequential
-# from tensorflow.keras.layers import *
-# from tensorflow.keras.losses import *
-# from tensorflow.keras.metrics import *
-# from tensorflow.keras.optimizers import *
 
 
 class ToxicityModel:
