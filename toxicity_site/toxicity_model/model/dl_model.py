@@ -4,12 +4,15 @@ import re
 import string
 import tensorflow
 from keras import Sequential
-from keras.layers import Embedding, GlobalAveragePooling1D, Dense
+from keras.layers import Embedding, GlobalAveragePooling1D, Dense, Dropout
+from sklearn.model_selection import train_test_split
+
+DIR_NAME = os.path.dirname(os.path.abspath(__file__))
 
 
 class ToxicityModel:
-    data_file = "comments.csv"
-    max_features = 10000
+    data_file = os.path.join(DIR_NAME, "comments.csv")
+    max_features = 20000
     sequence_length = 250
     embedding_dim = 9
     cnn_epochs = 5
