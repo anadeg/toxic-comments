@@ -8,16 +8,58 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 from .forms import RegisterForm
-from .models import SiteUser
+from .model.dl_model import ToxicityModel
+from .models import UserRequests
 
 
-# Create your views here.
-def home(request, *args, **kwargs):
-    return render(request, os.path.join("main", "home.html"))
+class SiteUser:
+    tm = ToxicityModel()
+    # toxic, severe_toxic, obscene, threat, insult, identity_hate
+    text_params = ["Text", "Toxic", "Severe Toxic", "Obscene", "Threat", "Insult", "Identity Hate"]
 
+    def home(self, request, *args, **kwargs):
+        # self.tm.fit()
+        return render(request, "home.html")
 
-def user_page(request, *args, **kwargs):
-    return render(request, "make_requests.html")
+    def user_page(self, request, *args, **kwargs):
+        text = request.POST.get("comment")
+        if text:
+            return self.get_request_result(request, *args, **kwargs)
+        return render(request, "make_requests.html")
+
+    def get_request_result(self, request, *args, **kwargs):
+        text = request.POST.get("comment")
+        result = self.tm.predict(text)
+        result = dict(zip(self.text_params[1:], list(result[0])))
+
+        current_user_id = request.user.id
+        ur = UserRequests(username_id=current_user_id,
+                          request_text=text,
+                          toxic=result["Toxic"],
+                          severe_toxic=result["Severe Toxic"],
+                          obscene=result["Obscene"],
+                          threat=result["Threat"],
+                          insult=result["Insult"],
+                          identity_hate=result["Identity Hate"])
+        ur.save()
+
+        return render(request, "request_result.html", {"text": text,
+                                                       "result": result})
+
+    def get_requests(self, request, *args, **kwargs):
+        current_user_id = request.user.id
+        user_reqs = UserRequests.objects.filter(username_id=current_user_id)
+
+        texts = [(ur.request_text,
+                  f'{ur.toxic:.2f}',
+                  f'{ur.severe_toxic:.2f}',
+                  f'{ur.obscene:.2f}',
+                  f'{ur.threat:.2f}',
+                  f'{ur.insult:.2f}',
+                  f'{ur.identity_hate:.2f}') for ur in user_reqs]
+
+        return render(request, "requests_history.html", {"texts": texts,
+                                                         "text_params": self.text_params})
 
 
 class RegisterUser(CreateView):
