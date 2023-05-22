@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if not request.user.is_authenticated %}
+    Welcome to Toxicity Checking System
+    <br>
+    Log in or sign up to continue
+{% endif %}
+
+{% endblock %}
+</body>
+</html>
