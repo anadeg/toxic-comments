@@ -2,7 +2,7 @@ from django.db import models
 
 
 class UserRequests(models.Model):
-    username_id = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
+    username_id = models.IntegerField(blank=False)
     request_text = models.TextField(max_length=10000)
     toxic = models.FloatField()
     severe_toxic = models.FloatField()
