@@ -70,17 +70,19 @@ class SiteUser:
 
     def save_to_json(self, request, *args, **kwargs):
         log_to_file_and_console("Save to json")
-        data = list(UserRequests.objects.values())
+
+        DIR_NAME = os.path.dirname(os.path.abspath(__file__))
+        current_user_id = request.user.id
+        data = list(UserRequests.objects.filter(username_id=current_user_id).values())
         response = JsonResponse(data, safe=False)
         # "users_requests_files"
         current_user_id = request.user.id
         file_name = "_".join(["requests", "user", f"{current_user_id}.json"])
-        file_name = os.path.join("users_requests_files", file_name)
+        file_name = os.path.join(DIR_NAME, "users_requests_files", file_name)
         with open(file_name, mode="wb") as f:
             f.write(response.content)
 
         return redirect("make_request")
-
 
 
 class RegisterUser(CreateView):
