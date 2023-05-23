@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 from .forms import RegisterForm
+from .logging_folder.logger_func import log_to_file_and_console
 from .model.dl_model import ToxicityModel
 from .models import UserRequests
 
@@ -18,16 +19,19 @@ class SiteUser:
     text_params = ["Text", "Toxic", "Severe Toxic", "Obscene", "Threat", "Insult", "Identity Hate"]
 
     def home(self, request, *args, **kwargs):
-        self.tm.fit()
+        log_to_file_and_console("Start project")
+        # self.tm.fit()
         return render(request, "home.html")
 
     def user_page(self, request, *args, **kwargs):
         text = request.POST.get("comment")
         if text:
             return self.get_request_result(request, *args, **kwargs)
+        log_to_file_and_console("Show request page")
         return render(request, "make_requests.html")
 
     def get_request_result(self, request, *args, **kwargs):
+        log_to_file_and_console("Compute user request")
         text = request.POST.get("comment")
         result = self.tm.predict(text)
         result = dict(zip(self.text_params[1:], list(result[0])))
@@ -42,11 +46,13 @@ class SiteUser:
                           insult=result["Insult"],
                           identity_hate=result["Identity Hate"])
         ur.save()
+        log_to_file_and_console("Add new user-request record")
 
         return render(request, "request_result.html", {"text": text,
                                                        "result": result})
 
     def get_requests(self, request, *args, **kwargs):
+        log_to_file_and_console("Get all user's requests results")
         current_user_id = request.user.id
         user_reqs = UserRequests.objects.filter(username_id=current_user_id)
 
@@ -72,6 +78,7 @@ class RegisterUser(CreateView):
         return dict(list(context.items()))
 
     def form_valid(self, form):
+        log_to_file_and_console("Create new user")
         user = form.save()
         login(self.request, user)
         return redirect('user_page')
@@ -86,10 +93,13 @@ class LoginUser(LoginView):
         return dict(list(context.items()))
 
     def get_success_url(self):
+        log_to_file_and_console("User logs in")
         return reverse_lazy("user_page")
 
 
 def logout_user(request):
+    current_user_id = request.user.id
+    log_to_file_and_console(f"User {current_user_id} logs out")
     logout(request)
     return redirect('login')
 
