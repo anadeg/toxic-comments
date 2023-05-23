@@ -20,7 +20,7 @@ class SiteUser:
 
     def home(self, request, *args, **kwargs):
         log_to_file_and_console("Start project")
-        # self.tm.fit()
+        self.tm.fit()
         return render(request, "home.html")
 
     def user_page(self, request, *args, **kwargs):
