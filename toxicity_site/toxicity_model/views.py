@@ -18,7 +18,7 @@ class SiteUser:
     text_params = ["Text", "Toxic", "Severe Toxic", "Obscene", "Threat", "Insult", "Identity Hate"]
 
     def home(self, request, *args, **kwargs):
-        # self.tm.fit()
+        self.tm.fit()
         return render(request, "home.html")
 
     def user_page(self, request, *args, **kwargs):
