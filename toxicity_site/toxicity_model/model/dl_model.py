@@ -6,8 +6,11 @@ import re
 import string
 import tensorflow
 from keras import Sequential
-from keras.layers import Embedding, GlobalAveragePooling1D, Dense, Dropout
+from keras.layers import GlobalAveragePooling1D
+from keras.layers.core import Embedding, Dense, Dropout
 from sklearn.model_selection import train_test_split
+
+from tensorflow import keras
 
 DIR_NAME = os.path.dirname(os.path.abspath(__file__))
 
@@ -38,12 +41,14 @@ class ToxicityModel:
         self.Y = self.data[self.data.columns[2:]]
 
         self.cnn_model = Sequential()
-        self.cnn_model.add(Embedding(self.max_features + 1, self.embedding_dim))
-        self.cnn_model.add(Dropout(0.2))
+        self.cnn_model.add(Embedding(self.max_features + 1,
+                                     self.embedding_dim,
+                                     embeddings_regularizer=keras.regularizers.l1_l2()))
+        # self.cnn_model.add(Dropout(0.2))
         self.cnn_model.add(GlobalAveragePooling1D())
-        self.cnn_model.add(Dropout(0.2))
-        self.cnn_model.add(Dense(16, activation='relu'))
-        self.cnn_model.add(Dense(6, activation='sigmoid'))
+        # self.cnn_model.add(Dropout(0.2))
+        self.cnn_model.add(Dense(16, activation='relu', kernel_regularizer=keras.regularizers.l1_l2()))
+        self.cnn_model.add(Dense(6, activation='sigmoid', kernel_regularizer=keras.regularizers.l1_l2()))
 
         self.cnn_model.compile(loss='binary_crossentropy',
                                optimizer='Adam',
@@ -67,7 +72,7 @@ class ToxicityModel:
         self.cnn_model.fit(X_train,
                            y_train,
                            epochs=self.cnn_epochs,
-                           batch_size=512,
+                           batch_size=256,
                            validation_data=(X_test, y_test))
 
     def predict(self, x):
