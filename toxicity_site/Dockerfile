@@ -1,19 +1,12 @@
-# The first instruction is what image we want to base our container on
-# We Use an official Python runtime as a parent image
-FROM python:3.10
+FROM python:3.10-slim-buster
 
-# The enviroment variable ensures that the python output is set straight
-# to the terminal with out buffering it first
-ENV PYTHONUNBUFFERED 1
+RUN pip3 install --upgrade pip
 
-# create root directory for our project in the container
-RUN mkdir /site_service
+WORKDIR /app
 
-# Set the working directory to /music_service
-WORKDIR /site_service
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
-# Copy the current directory contents into the container at /music_service
-ADD . /site_service/
+COPY . .
 
-# Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
