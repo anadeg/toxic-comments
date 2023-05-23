@@ -2,6 +2,7 @@ import os
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
@@ -66,6 +67,20 @@ class SiteUser:
 
         return render(request, "requests_history.html", {"texts": texts,
                                                          "text_params": self.text_params})
+
+    def save_to_json(self, request, *args, **kwargs):
+        log_to_file_and_console("Save to json")
+        data = list(UserRequests.objects.values())
+        response = JsonResponse(data, safe=False)
+        # "users_requests_files"
+        current_user_id = request.user.id
+        file_name = "_".join(["requests", "user", f"{current_user_id}.json"])
+        file_name = os.path.join("users_requests_files", file_name)
+        with open(file_name, mode="wb") as f:
+            f.write(response.content)
+
+        return redirect("make_request")
+
 
 
 class RegisterUser(CreateView):

@@ -14,4 +14,5 @@ urlpatterns = [
     path('user_page', su.user_page, name="user_page"),
     path('requests_history', su.get_requests, name="requests_history"),
     path('make_requests', su.user_page, name="make_request"),
+    path('save_to_json', su.save_to_json, name="save_to_json"),
 ]
