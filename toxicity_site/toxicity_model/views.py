@@ -10,18 +10,19 @@ from django.views.generic import CreateView
 
 from .forms import RegisterForm
 from .logging_folder.logger_func import log_to_file_and_console
-from .model.dl_model import ToxicityModel
+from .model.dl_model import fit_model, predict_model
 from .models import UserRequests
 
 
 class SiteUser:
-    tm = ToxicityModel()
+    # tm = ToxicityModel()
     # toxic, severe_toxic, obscene, threat, insult, identity_hate
     text_params = ["Text", "Toxic", "Severe Toxic", "Obscene", "Threat", "Insult", "Identity Hate"]
 
     def home(self, request, *args, **kwargs):
         log_to_file_and_console("Start project")
-        self.tm.fit()
+        # self.tm.fit()
+        fit_model()
         return render(request, "home.html")
 
     def user_page(self, request, *args, **kwargs):
@@ -34,7 +35,8 @@ class SiteUser:
     def get_request_result(self, request, *args, **kwargs):
         log_to_file_and_console("Compute user request")
         text = request.POST.get("comment")
-        result = self.tm.predict(text)
+        # result = self.tm.predict(text)
+        result = predict_model(text)
         result = dict(zip(self.text_params[1:], list(result[0])))
 
         current_user_id = request.user.id
