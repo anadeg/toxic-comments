@@ -15,8 +15,6 @@ from .models import UserRequests
 
 
 class SiteUser:
-    # tm = ToxicityModel()
-    # toxic, severe_toxic, obscene, threat, insult, identity_hate
     text_params = ["Text", "Toxic", "Severe Toxic", "Obscene", "Threat", "Insult", "Identity Hate"]
 
     def home(self, request, *args, **kwargs):
@@ -35,7 +33,6 @@ class SiteUser:
     def get_request_result(self, request, *args, **kwargs):
         log_to_file_and_console("Compute user request")
         text = request.POST.get("comment")
-        # result = self.tm.predict(text)
         result = predict_model(text)
         result = dict(zip(self.text_params[1:], list(result[0])))
 
