@@ -27,8 +27,11 @@ class SiteUser:
         text = request.POST.get("comment")
         if text:
             return self.get_request_result(request, *args, **kwargs)
+
         log_to_file_and_console("Show request page")
-        return render(request, "make_requests.html")
+
+        title = "Enter your message"
+        return render(request, "make_requests.html", {"title": title})
 
     def get_request_result(self, request, *args, **kwargs):
         log_to_file_and_console("Compute user request")
@@ -48,8 +51,10 @@ class SiteUser:
         ur.save()
         log_to_file_and_console("Add new user-request record")
 
+        title = "Result of processing"
         return render(request, "request_result.html", {"text": text,
-                                                       "result": result})
+                                                       "result": result,
+                                                       "title": title})
 
     def get_requests(self, request, *args, **kwargs):
         log_to_file_and_console("Get all user's requests results")
@@ -64,8 +69,10 @@ class SiteUser:
                   f'{ur.insult:.2f}',
                   f'{ur.identity_hate:.2f}') for ur in user_reqs]
 
+        title = "Requests History"
         return render(request, "requests_history.html", {"texts": texts,
-                                                         "text_params": self.text_params})
+                                                         "text_params": self.text_params,
+                                                         "title": title})
 
     def save_to_json(self, request, *args, **kwargs):
         log_to_file_and_console("Save to json")
