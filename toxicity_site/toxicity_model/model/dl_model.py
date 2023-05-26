@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 DIR_NAME = os.path.dirname(os.path.abspath(__file__))
 train = pd.read_csv(os.path.join(DIR_NAME, "comments.csv"))
 
-embedding_dim = 9
+embedding_dim = 16
 max_features = 10000
 sequence_length = 250
 
